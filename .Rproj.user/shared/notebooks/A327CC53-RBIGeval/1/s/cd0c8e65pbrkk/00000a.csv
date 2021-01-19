@@ -1,0 +1,3 @@
+"0","ggplot(dataSexG3, aes(x = sex, y = G3)) +"
+"0","        geom_boxplot(col = ""black"") +"
+"0","        ggtitle(""Moyennes des notes finales par sexe"")"

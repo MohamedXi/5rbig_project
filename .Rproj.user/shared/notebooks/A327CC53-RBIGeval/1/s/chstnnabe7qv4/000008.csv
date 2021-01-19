@@ -1,0 +1,6 @@
+"0","cor(student$G3, student$failures)"
+"1","[1]"
+"1"," -0.3604149"
+"1","
+"
+"0","plot(x=student$failures, y=student$G3, xlab = ""Failures"", ylab = ""Rank"", col = ""blue"")"

@@ -1,0 +1,2 @@
+"0","G1=ggplot(data=student,aes(x=age, y=G1, col=sex, shape=sex))+geom_point()+geom_smooth(method=""lm"",se=F)+facet_grid(~sex)"
+"0","G1"

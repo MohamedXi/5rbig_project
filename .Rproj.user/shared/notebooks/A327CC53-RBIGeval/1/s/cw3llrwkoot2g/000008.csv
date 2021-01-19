@@ -1,0 +1,1 @@
+"0","ggplot(student,aes(x=studytime,y=G3)) + stat_summary(fun=""mean"", geom=""bar"",fill=""darkblue"") + ggtitle(""G3 versus studytime"")"

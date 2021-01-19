@@ -1,0 +1,2 @@
+"0","#plot(with(student,G2), with(student,G3), xlab='G1', ylab='G3')"
+"0","ggplot(student, aes(x=G2,y=G3)) + geom_point() + geom_smooth(method=""lm"", se=FALSE)"

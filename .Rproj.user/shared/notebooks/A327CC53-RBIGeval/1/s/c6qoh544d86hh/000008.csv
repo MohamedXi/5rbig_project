@@ -1,0 +1,1 @@
+"0","ggplot(data=mprbig,aes(x=schoolsup,fill=schoolsup))+geom_bar()"

@@ -1,0 +1,5 @@
+"0","fkrbig <- cbind(mprbig[0:nbl,], clusterNum = krbig$cluster)"
+"0","ggplot(fkrbig, aes(x = clusterNum, y = G3)) + "
+"0","  geom_boxplot(aes(group = clusterNum)) + "
+"0","  stat_summary(fun = ""mean"", geom = ""point"", size= 2) +"
+"0","  ggtitle(""Note par rapport au cluster"")"

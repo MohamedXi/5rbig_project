@@ -1,0 +1,1 @@
+"0","ggplot(data=mprbig,aes(x=sex,fill=finalResult))+geom_bar()"

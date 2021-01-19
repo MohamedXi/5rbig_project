@@ -1,0 +1,6 @@
+"0","# nombre de ligne"
+"0","nbl <- 40"
+"0","# creation du data frame"
+"0","kdf <- data.frame(mprbig$age,mprbig$studytime,mprbig$failures,mprbig$absences,mprbig$G1,mprbig$G2,mprbig$G3)"
+"0","#scaling the data"
+"0","kdf <- scale(kdf[0:nbl,])"

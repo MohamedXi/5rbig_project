@@ -1,0 +1,2 @@
+"0","ggplot(student,aes(x=G3,fill=sex))+geom_bar(position=""stack"")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+"
+"0","  labs(x=""Note (G3)"",y=""Sex"",title=""Notes des élèves par sexe"")"

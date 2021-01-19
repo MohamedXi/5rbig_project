@@ -1,0 +1,2 @@
+"0","absences= ggplot(data=student,aes(x=absences, y=G1, col=sex))+geom_point()+geom_smooth(method=""lm"",se=F)+facet_grid(~sex)"
+"0","absences"

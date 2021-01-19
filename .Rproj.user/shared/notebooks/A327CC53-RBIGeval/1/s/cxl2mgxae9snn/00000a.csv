@@ -1,0 +1,3 @@
+"0","#decoupe de l'arbre en cluster"
+"0","cut <- cutree(hrbig,2)"
+"0","plot(hrbig)"

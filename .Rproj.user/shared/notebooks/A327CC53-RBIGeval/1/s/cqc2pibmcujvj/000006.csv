@@ -1,0 +1,2 @@
+"0","krbig <- kmeans(kdf, centers = 2, nstart = 50)"
+"0","fviz_cluster(krbig, data = kdf)"

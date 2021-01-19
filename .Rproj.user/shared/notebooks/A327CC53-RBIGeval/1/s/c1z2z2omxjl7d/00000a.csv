@@ -1,0 +1,2 @@
+"0","G3Dens <- density(dataSexG3$G3)"
+"0","plot(G3Dens)"

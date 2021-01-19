@@ -1,0 +1,7 @@
+"0","ggplot(data = student, aes(x = failures)) +"
+"0","  geom_histogram(binwidth = 0.50, fill='darkblue', color='darkblue') +"
+"0","  geom_density() +"
+"0","  ggtitle(""Distribution of previous failures in student data"") +"
+"0","  xlab(""Failures"") +"
+"0","  ylab(""Distribution of Failures"")+"
+"0","  theme(plot.title=element_text(face=""bold""))"

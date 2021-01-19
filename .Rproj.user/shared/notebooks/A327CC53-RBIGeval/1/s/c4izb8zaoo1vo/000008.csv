@@ -1,0 +1,7 @@
+"0","var(student$G1)"
+"1","[1]"
+"1"," 11.01705"
+"1","
+"
+"0","ages= ggplot(data=student,aes(x=age, fill=sex))+geom_histogram(binwidth=0.50)"
+"0","ages"

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1610701557059.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1480059611",
+    "id" : "30C0E84B",
+    "lastKnownWriteTime" : 1607100891,
+    "last_content_update" : 1607100891,
+    "path" : "D:/5 RBIG/eval/Rstud/Supinfo_5DATA_day_1.Rmd",
+    "project_path" : "Supinfo_5DATA_day_1.Rmd",
+    "properties" : {
+        "cursorPosition" : "263,32",
+        "scrollLine" : "214"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

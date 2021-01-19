@@ -1,0 +1,4 @@
+"0","numeric_features <- Filter(is.numeric, student)"
+"0",""
+"0","library(pheatmap)"
+"0","pheatmap(cor(numeric_features))"

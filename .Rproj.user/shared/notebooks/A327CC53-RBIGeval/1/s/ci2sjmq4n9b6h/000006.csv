@@ -1,0 +1,8 @@
+"0","#nombre de ligne"
+"0","nbl <- 40"
+"0","#creation du data frame"
+"0","hdf <- data.frame(mprbig$age,mprbig$studytime,mprbig$failures,mprbig$absences,mprbig$G1,mprbig$G2,mprbig$G3)"
+"0","# la matrice de distance"
+"0","distmat <- dist(hdf[0:nbl,],method = 'euclidean')"
+"0","hrbig <- hclust(distmat)"
+"0","plot(hrbig)"

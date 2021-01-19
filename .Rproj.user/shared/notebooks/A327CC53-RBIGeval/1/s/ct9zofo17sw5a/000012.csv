@@ -1,0 +1,4 @@
+"0","sexGraph <- table(dataSexG3$sex)"
+"0",""
+"0","par(mfrow=c(2,2))"
+"0","hist(dataSexG3$G3, breaks = 30, col = ""darkblue"", main = ""Histogram de la variable student"")"
