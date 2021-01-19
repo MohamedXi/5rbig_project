@@ -1,0 +1,513 @@
+---
+title: "Étudier la perfomance des étudiants"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  html_notebook: default
+---
+**Membre du Groupe :** Ismael Mohamed 295465, Romain Pion 222525, Mathieu Guilbaud 223096
+
+# Introduction
+Ces données concernent les élèves de deux écoles publiques portugaises et ont été recueillies au cours de l'année scolaire 2005-2006. Nous étudierons toutes les variables et leurs interactions, en mettant l'accent sur les facteurs qui influent sur la réussite des élèves.
+
+# 1 Préapartion de la data
+## 1.1 Vérification des variables
+Chargement des librairies
+```{r}
+if(!require("ggplot2")){install.packages("ggplot2")}
+if(!require("dplyr")){install.packages("dplyr")}
+if(!require("ggwordcloud")){install.packages("ggwordcloud")}
+if(!require("readxl")){install.packages("readxl")}
+if(!require("factorplot")){install.packages("factorplot")}
+if(!require("wordcloud2")){install.packages("wordcloud2")}
+if(!require("readxl")){install.packages("readxl")}
+if(!require("factorplot")){install.packages("factorplot")}
+if(!require("pheatmap")){install.packages("pheatmap")}
+if(!require("car")){install.packages("car")}
+if(!require("factoextra")){install.packages("factoextra")}
+if(!require("cluster")){install.packages("cluster")}
+if(!require("tidyverse")){install.packages("tidyverse")}
+library(tidyverse)
+library(cluster)
+library(factoextra)
+library(ggplot2)
+options(warn=-1)
+library(dplyr)
+library(readr)
+library(psych)
+library(ggwordcloud)
+library(wordcloud2)
+library(readxl)
+library(factorplot)
+library(pheatmap)
+library(car)
+```
+
+Chargement des données.
+```{r}
+mprbig <- read_excel("MP-5RBIG.xlsx")
+```
+
+Affichage des différentes variable;
+```{r}
+head(mprbig)
+```
+```{r}
+summary(mprbig)
+```
+
+Vérification s'il n'y a pas de valaure manquante
+```{r}
+sum(is.na(mprbig))
+```
+
+## 1.2 Ajout de la variable finalResult
+```{r}
+finalResult <- NULL
+for (x in mprbig$G3) {
+  if (x < 10 ) {
+   finalResult <- c(finalResult,"fail")
+  } else {
+   finalResult <- c(finalResult,"pass")
+  }
+}
+mprbig <- data.frame(mprbig,finalResult)
+mprbig
+```
+
+## 1.3 Ajout de la variable academicGrade
+```{r}
+academicGrade <- NULL
+for (x in mprbig$G3) {
+  if (x >= 16  ) {
+   academicGrade <- c(academicGrade,"A")
+  }
+  if (x >= 14 && x < 16) {
+   academicGrade <- c(academicGrade,"B")
+  }
+  if (x >= 12 && x < 14) {
+   academicGrade <- c(academicGrade,"C")
+  }
+  if (x >= 10 && x < 12) {
+   academicGrade <- c(academicGrade,"D")
+  }
+  if (x <= 9){
+    academicGrade <- c(academicGrade,"E")
+  }
+}
+mprbig <- data.frame(mprbig,academicGrade)
+mprbig
+```
+
+# 2 Etude des variables catégorielles
+
+## 2.1 Étudiez individuellement les principales variables catégorielles
+
+Le genre
+La majorité des individus sont des femmes
+```{r}
+ggplot(data=mprbig,aes(x=sex,fill=sex)) + geom_bar()
+```
+L'éducation de la mère
+La majorité des individus ont une mère avec un niveau d'étude élevé
+```{r}
+ggplot(data=mprbig,aes(x=Medu,fill=Medu))+geom_bar()
+```
+L'éducation du père
+La majorité des individus ont un père ayant un niveau d'étude élevé
+```{r}
+ggplot(data=mprbig,aes(x=Fedu,fill=Fedu))+geom_bar()
+```
+Le support pédagogique suplémentaire
+La majorité des individus n'ont pas de support pédagogique suplémentaire
+```{r}
+ggplot(data=mprbig,aes(x=schoolsup,fill=schoolsup))+geom_bar()
+```
+Le soutien éducatif familial
+La majorité des individus ont un soutien éducatif familial
+```{r}
+ggplot(data=mprbig,aes(x=famsup,fill=famsup))+geom_bar()
+```
+Les cours de mathématiques payant suplémentaire
+La majorité des individus ne suivent pas de cours de mathématiques payant suplémentaire
+```{r}
+ggplot(data=mprbig,aes(x=paid,fill=paid))+geom_bar()
+```
+Nombre d'individus voulant suivre des études supérieurs
+La majorité des individus veulent suivre des études supérieurs
+```{r}
+ggplot(data=mprbig,aes(x=higher,fill=higher))+geom_bar()
+```
+L'accès à internet à son domicile
+La majorité des individus ont accès à internet
+```{r}
+ggplot(data=mprbig,aes(x=internet,fill=internet))+geom_bar()
+```
+Les admis
+La majorité des individus ont réussie leur examen
+```{r}
+ggplot(data=mprbig,aes(x=finalResult,fill=finalResult))+geom_bar()
+```
+Le niveau obtenu à l'examen
+La majorité des individus ont obtenu le niveau E
+```{r}
+ggplot(data=mprbig,aes(x=academicGrade,fill=academicGrade))+geom_bar()
+```
+## 2.2 Représente les associations entre des paires de variables catégorielles
+
+Analyse du genre sur le support pédagogique suplémentaire
+Proportionellement, les femmes reçoivent plus souvent un support pédagogique suplémentaire que les hommes
+```{r}
+ggplot(data=mprbig,aes(x=sex,fill=schoolsup))+geom_bar()
+```
+Analyse du genre sur l'aide éducatif familial
+Les hommes reçoivent plus souvent de l'aide éducatif familial que les femmes
+```{r}
+ggplot(data=mprbig,aes(x=sex,fill=famsup))+geom_bar()
+```
+Analyse du genre sur l'envie de suivre des études supérieurs
+Les femmes ont majoritairement envie de faire des études supérieurs
+```{r}
+ggplot(data=mprbig,aes(x=sex,fill=higher))+geom_bar()
+```
+Analyse du genre sur l'obtention du diplome
+Les hommes ont proportionellement mieux réussie à obtenir leur diplome que les femmes
+```{r}
+ggplot(data=mprbig,aes(x=sex,fill=finalResult))+geom_bar()
+```
+Analyse du genre sur le niveau obtenu suite à l'examen
+Les femmes ont de meilleurs résultats que les hommes
+```{r}
+ggplot(data=mprbig,aes(x=academicGrade,fill=sex))+geom_bar()
+```
+Analyse du niveau d'étude de la mère sur l'obtention de l'examen
+Les individus ayant réussie leur examen ont majoritairement une mère avec un haut niveau d'étude
+```{r}
+ggplot(data=mprbig,aes(x=Medu,fill=finalResult))+geom_bar()
+```
+Analyse du support pédagogique suplémentaire sur l'aide éducatif familial
+Les individus ayant du support pédagogique suplémentaire ont plus d'aide éducatif familial
+```{r}
+ggplot(data=mprbig,aes(x=schoolsup,fill=famsup))+geom_bar()
+```
+Analyse de l'envie de faire des études supérieurs sur le niveau d'étude de la mère
+Les individus ayant envie de faire des études supérieurs ont en grande partie une mère ayant un haut niveau d'étude
+```{r}
+ggplot(data=mprbig,aes(x=Medu,fill=higher))+geom_bar()
+```
+Analyse de l'envie de faire des études supérieurs sur le niveau d'étude du père
+Les individus ayant envie de faire des études supérieurs ont majoritairement un père ayant un niveau d'étude élevé
+```{r}
+ggplot(data=mprbig,aes(x=Fedu,fill=higher))+geom_bar()
+```
+Analyse du niveau d'étude du père sur l'obtention de l'examen
+Le niveau d'étude du père ne semble pas avoir d'impact sur l'obtention de l'examen
+```{r}
+ggplot(data=mprbig,aes(x=Fedu,fill=finalResult))+geom_bar()
+```
+Analyse de la possession de internet sur l'obtention de l'examen
+La majorité des individus ayant réussie leur examen ont internet
+```{r}
+ggplot(data=mprbig,aes(x=internet,fill=finalResult))+geom_bar()
+```
+Analyse de la possession de internet sur le niveau obtenu à l'examen
+Les meilleurs notes ont été obtenue par des individus ayant internet ( grade E )
+```{r}
+ggplot(data=mprbig,aes(x=academicGrade,fill=internet))+geom_bar()
+```
+## 2.3 Étudiez les associations entre des paires de variables catégorielles
+
+Analyse du genre sur l'envie de faire des études supérieurs
+```{r}
+# association sex, envie de faire des études supérieurs
+test = chisq.test(mprbig$sex,mprbig$higher)
+test$statistic # la statistique du Chi2
+test$parameter # le nombre de degrés de libertés
+test$p.value # la p-value
+test$observed # la matrice observée de départ
+test$expected # la matrice attendue sous l'hypothèse nulle d'absence de biais
+
+```
+On constate que la p-value étant inférieur à 5%, On rejette l'hypothèse de dépendance entre les deux variables
+
+Analyse de l'envie de faire des études supérieurs sur l'obtention de l'examen
+```{r}
+# association envie de faire des études supérieures, obtention de l'examen
+test = chisq.test(mprbig$higher,mprbig$finalResult)
+test$statistic # la statistique du Chi2
+test$parameter # le nombre de degrés de libertés
+test$p.value # la p-value
+test$observed # la matrice observée de départ
+test$expected # la matrice attendue sous l'hypothèse nulle d'absence de biais
+```
+On constate que la p-value étant inférieur à 5%, On rejette l'hypothèse de dépendance entre les deux variables
+
+# 3 Etude des variables quantitatives
+## 3.1 Étude individuelle des principales variables quantitatives
+### Etudier la varible ***age***
+```{r}
+student <- mprbig
+var(student$age)
+age= ggplot(aes(x=age), data=student)+
+  geom_histogram(binwidth = 0.50, fill='darkblue', color='darkblue')+
+  ggtitle("Age of students")
+age
+```
+
+L'histogramme ci-dessus montre clairement que la plupart des élèves ont entre 15 et 18 ans, ce qui est logique puisque la plupart des élèves commencent le lycée à l'âge de 15 ans et le terminent à 18 ans, étant donné qu'en général, les lycées du monde entier ne durent que 3 ans.
+
+### Etudier la varible ***studytime***
+```{r}
+ggplot(student,aes(x=studytime,y=G3)) + stat_summary(fun="mean", geom="bar",fill="darkblue") + ggtitle("G3 versus studytime")
+```
+Comme le montre la figure ci-dessus, les étudiants qui étudient plus longtemps obtiennent de meilleures notes finales que ceux qui étudient moins longtemps.
+
+### Étude de la variable failure
+Répartition des échecs précédents.
+```{r}
+ggplot(data = student, aes(x = failures)) +
+  geom_histogram(binwidth = 0.50, fill='darkblue', color='darkblue') +
+  geom_density() +
+  ggtitle("Distribution of previous failures in student data") +
+  xlab("Failures") +
+  ylab("Distribution of Failures")+
+  theme(plot.title=element_text(face="bold"))
+```
+Afficher la corrélation entre les échecs et les notes.
+```{r}
+cor(student$G3, student$failures)
+plot(x=student$failures, y=student$G3, xlab = "Failures", ylab = "Rank", col = "blue")
+```
+
+
+### Étude de la variable ***absences***
+```{r}
+absences= ggplot(data=student,aes(x=absences, y=G1, col=sex))+geom_point()+geom_smooth(method="lm",se=F)+facet_grid(~sex)
+absences
+```
+À partir du graphique ci-dessus, nous pouvons voir comment l'absence affecte négativement les performances des garçons, mais l'absence de cours n'a pas d'impact négatif sur les performances des filles en classe.
+
+
+### Étude de la variable ***G1***
+```{r}
+var(student$G1)
+ages= ggplot(data=student,aes(x=age, fill=sex))+geom_histogram(binwidth=0.50)
+ages
+```
+Comme le montre clairement le graphique ci-dessus, la plupart des étudiants de plus de 18 ans sont des étudiants de sexe masculin car il n'y a pas d'étudiantes de plus de 20 ans.
+
+***G1 par rapport au sexe et à l'âge***
+```{r}
+G1=ggplot(data=student,aes(x=age, y=G1, col=sex, shape=sex))+geom_point()+geom_smooth(method="lm",se=F)+facet_grid(~sex)
+G1
+```
+Nous pouvons voir que les performances des filles s'améliorent avec l'âge, cependant, une diminution des performances des garçons et nettement visible dans le graphique ci-dessus.
+
+-------------- g2
+
+
+## 3.2 Calcul de la matrice de corrélation pour les variables quantitatives.
+### Carte thermique pour la matrice de corrélation
+```{r}
+numeric_features <- Filter(is.numeric, student)
+
+library(pheatmap)
+pheatmap(cor(numeric_features))
+```
+
+Comme montre la carte, la corrélation varie entre 1 et -1. La couleur rouge correspond à la corrélation élevée entre nos caractéristiques.
+
+Par exemple : 
+Corrélation positive : ***G1*** et ***G3***
+Corrélation négative : les ***failures*** et le ***studytime*** présentent une corrélation négative
+
+
+### Matrice de nuage de points G1 et G3
+
+```{r}
+#plot(with(student,G2), with(student,G3), xlab='G1', ylab='G3')
+ggplot(student, aes(x=G2,y=G3)) + geom_point() + geom_smooth(method="lm", se=FALSE)
+```
+On peut remarquer le G3 présente une forte corrélation positive avec le G2.
+
+### Régression multiple entre la variable G3 par rapport à age 
+```{r}
+ggplot(student,aes(x=G3))+geom_histogram(fill="darkblue",color="darkblue",na.rm=TRUE)+
+    labs(title="Classement des notes G3 par rapport à l'âge",y="",x="")+facet_wrap(~age)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 4 Étude des relations entre les variables catégorielles et quantitatives.
+### 4.1 Représenter les associations entre les variables quantitatives et les variables catégorielles (Boxplots, Bar charts for means, Stacked bar charts, Multiple histograms, etc.)
+
+```{r}
+contengency <- table(student$G3,student$sex)
+print(contengency)
+```
+
+Consultation de la dépendance avec un stack bar chart.
+```{r}
+ggplot(student,aes(x=G3,fill=sex))+geom_bar(position="stack")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x="Note (G3)",y="Sex",title="Notes des élèves par sexe")
+```
+
+
+On fait ensuite une comparaison avec des % pour mieu representer le graph.
+
+```{r}
+ggplot(student,aes(x=G3,fill=sex))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x="Note (G3)",y="Sexe",title="Notes des élèves par sexe en %")
+```
+
+
+### 4.2 Effectuer des tests t pour comparer par paire la moyenne de certaines variables quantitatives en fonction des deux niveaux de certaines variables catégorielles binaires.
+
+
+Créer un ensemble de données constitué uniquement de données mathématiques, avec des variables sexe (***sex***) et note finale(***G3***.
+
+```{r}
+dataSexG3 = subset(student, select = c(sex, G3))
+glimpse(dataSexG3)
+```
+Nous avons donc une variable catégorielle qui est le ***sex***. Et nous avons une variable quantitative qui est ***G3$** (note final)
+
+
+Histograms/barplot des différentes variables qui seront pertinentes pour les tests statistiques. 
+```{r}
+sexGraph <- table(dataSexG3$sex)
+
+par(mfrow=c(2,2))
+hist(dataSexG3$G3, breaks = 30, col = "darkblue", main = "Histogram de la variable student")
+barplot(sexGraph, col="darkblue", main = "Barplot de la variable sex")
+```
+
+
+Graphiques de densité pour l'âge, les absences et le note finale
+```{r}
+G3Dens <- density(dataSexG3$G3)
+plot(G3Dens)
+```
+
+Nous pouvons voir quelques tendances claires dans les données.Il y a seulement un peu plus de femmes que d'hommes, et la note finale en mathématiques est à peu près également répartie.le plus grand nombre de personnes qui ont échoué aux tests, c'est-à-dire qui ont reçu la note 0, fera pencher toute analyse des moyennes des notes finales nettement vers la gauche. Cela est assez évident si l'on regarde le graphique de densité ci-dessus. 
+
+
+### 4.2 Effectuer des tests pour comparer par paire la moyenne de certaines variables quantitatives en fonction des deux niveaux de certaines variables catégorielles binaires.
+
+
+***Le test de Bartlett***
+```{r}
+bartlett.test(G3[dataSexG3$G3 > 0] ~ sex[dataSexG3$G3 > 0], data=dataSexG3)
+```
+
+
+***Le test de Levene***
+```{r}
+leveneTest(y = dataSexG3$G3, group = dataSexG3$sex)
+```
+
+
+***Visualisation par Boxplot des notes finales pour chaque sexe.***
+```{r}
+ggplot(dataSexG3, aes(x = sex, y = G3)) +
+        geom_boxplot(col = "black") +
+        ggtitle("Moyennes des notes finales par sexe")
+```
+
+
+En se basant sur les deux tests et la visualisation des données en question, on peut affirmer sans risque que l'hypothèse d'homogénéité de la variance est remplie dans cet exemple.
+
+*L'homogénéité des variances t.test*
+```{r}
+t.test(dataSexG3$G3[dataSexG3$sex=="F" & dataSexG3$G3>0], dataSexG3$G3[dataSexG3$sex=="M" & dataSexG3$G3>0])
+```
+
+Les notes finales moyennes des filles et des garçons sont présentées dans la console après avoir effectué le test t. Les filles ont obtenu une note de 11,20, et les garçons une note moyenne de 11,86. Cette différence est égale à environ 0,66.
+
+### 4.3 ANOVA pour trouver la différence entre l'âge et les notes
+```{r}
+age.g3 <- aov(G3 ~ factor(age), data = student)
+TukeyHSD(age.g3)
+```
+
+Les résultats montrent qu'il n'y a pas de différence dans les notes finales entre les différents groupes d'âge. Les valeurs p Adj sont toutes supérieures à 0,05.
+
+
+# 5 Clustering
+## 5.1 K-moyennes
+
+Preparion de la donné
+```{r}
+# nombre de ligne
+nbl <- 40
+# creation du data frame
+kdf <- data.frame(mprbig$age,mprbig$studytime,mprbig$failures,mprbig$absences,mprbig$G1,mprbig$G2,mprbig$G3)
+#scaling the data
+kdf <- scale(kdf[0:nbl,])
+```
+Désignation du meilleur nombre de clusters
+```{r}
+#Average Silhouette Method
+fviz_nbclust(kdf, kmeans, method = "silhouette")
+#Gap Statistic Method (methode pour savoir le nombre de cluster)
+gap_stat <- clusGap(kdf, FUN = kmeans, nstart = 25, K.max = 10)
+fviz_gap_stat(gap_stat)
+```
+
+Visualisation des clusters
+```{r}
+krbig <- kmeans(kdf, centers = 2, nstart = 50)
+fviz_cluster(krbig, data = kdf)
+```
+Anlalise des clusters
+```{r}
+fkrbig <- cbind(mprbig[0:nbl,], clusterNum = krbig$cluster)
+ggplot(fkrbig, aes(x = clusterNum, y = G3)) + 
+  geom_boxplot(aes(group = clusterNum)) + 
+  stat_summary(fun = "mean", geom = "point", size= 2) +
+  ggtitle("Note par rapport au cluster")
+```
+Dans le le graphique ci-dessus, nous pouvons observer que le premier cluster montre ceux qui ont reussi et dans le deuxiéme cluster ceux qui n'ont pas réussi.
+
+On remarque que les cluster se font par rapport au note , on peux en déduire que les variables utilisées n'ont pas d'influence sur les notes 
+
+## 5.2 Regroupement hiérarchique
+Visualisation du Regroupement hiérarchique
+```{r}
+#nombre de ligne
+nbl <- 40
+#creation du data frame
+hdf <- data.frame(mprbig$age,mprbig$studytime,mprbig$failures,mprbig$absences,mprbig$G1,mprbig$G2,mprbig$G3)
+# la matrice de distance
+distmat <- dist(hdf[0:nbl,],method = 'euclidean')
+hrbig <- hclust(distmat)
+plot(hrbig)
+```
+On remarque bien qu'il y a deux grande partie
+
+Découpe de l'arbre en clusters
+```{r}
+#decoupe de l'arbre en cluster
+cut <- cutree(hrbig,2)
+plot(hrbig)
+rect.hclust(hrbig , k = 2, border = 2:6)
+```
+Analise des donner dans chaque clusters
+```{r}
+fhrbig <- cbind(mprbig[0:nbl,], clusterNum = cut)
+ggplot(fhrbig, aes(x = clusterNum, y = G3)) + 
+  geom_boxplot(aes(group = clusterNum)) + 
+  stat_summary(fun = "mean", geom = "point", size= 2) +
+  ggtitle("Note par rapport au cluster")
+```
+On remarque que c'est la meme disposition qu'avec le k-moyenne mais les cluster sont inversés :  dans le premier nous avons les moins bonne notes et dans le 2ieme les meilleurs notes
+
+On remarque les mêmes clusters que le k-moyenne, on peux dire que les variable utilisé n'ont pas d'influence sur les notes
+
+## 6 Conlusion
+
+Suite à l'étude que nous avons mené sur les données du fichier CSV/XLXS, nous pouvons conclure que le facteur qui influe le plus sur la notation des étudiants est le genre. En effet, nous avons constaté que les filles sont beaucoup plus motivée à l'idée de poursuivre des études supérieures et ont plus de support pédagogique que les garçons(support de cours personnel supplémentaire).
+
+Pour les garçons, ils sont plus âgés, étudient moins et ont plus d'absences que les filles. Cela entraîne un retard qu'ils n'arrivent pas à rattraper par la suite.
+
+Ce qui permet donc d'affirmer que les filles s'en mieux que les garçons dans leurs études de manière générale.

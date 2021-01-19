@@ -1,0 +1,220 @@
+---
+title: "Étudier la réussite des étudiants"
+output: html_notebook
+---
+
+# Introduction
+Ces données concernent les élèves de deux écoles publiques portugaises et ont été recueillies au cours de l'année scolaire 2005-2006. Nous étudierons toutes les variables et leurs interactions, en mettant l'accent sur les facteurs qui influent sur la réussite des élèves.
+
+Chargement des librairies
+```{r}
+library(ggplot2)
+options(warn=-1)
+library(dplyr)
+library(psych)
+library(ggwordcloud)
+library(wordcloud2)
+library(readxl)
+library(factorplot)
+library(pheatmap)
+library(car)
+```
+
+Chargement des données.
+```{r}
+student <- read_excel("MP-5RBIG.xlsx")
+```
+
+Affichage des différentes variable;
+```{r}
+head(student)
+```
+# 3 Etude des variables quantitatives
+## 3.1 Étude individuelle des principales variables quantitatives
+### Etudier la varible ***age***
+```{r}
+var(student$age)
+age= ggplot(aes(x=age), data=student)+
+  geom_histogram(binwidth = 0.50, fill='darkblue', color='darkblue')+
+  ggtitle("Age of students")
+age
+```
+
+L'histogramme ci-dessus montre clairement que la plupart des élèves ont entre 15 et 18 ans, ce qui est logique puisque la plupart des élèves commencent le lycée à l'âge de 15 ans et le terminent à 18 ans, étant donné qu'en général, les lycées du monde entier ne durent que 3 ans.
+
+### Etudier la varible ***studytime***
+```{r}
+ggplot(student,aes(x=studytime,y=G3)) + stat_summary(fun="mean", geom="bar",fill="darkblue") + ggtitle("G3 versus studytime")
+```
+Comme le montre la figure ci-dessus, les étudiants qui étudient plus longtemps obtiennent de meilleures notes finales que ceux qui étudient moins longtemps.
+
+### Étude de la variable failure
+Répartition des échecs précédents.
+```{r}
+ggplot(data = student, aes(x = failures)) +
+  geom_histogram(binwidth = 0.50, fill='darkblue', color='darkblue') +
+  geom_density() +
+  ggtitle("Distribution of previous failures in student data") +
+  xlab("Failures") +
+  ylab("Distribution of Failures")+
+  theme(plot.title=element_text(face="bold"))
+```
+Afficher la corrélation entre les échecs et les notes.
+```{r}
+cor(student$G3, student$failures)
+plot(x=student$failures, y=student$G3, xlab = "Failures", ylab = "Rank", col = "blue")
+```
+
+
+### Étude de la variable ***absences***
+```{r}
+absences= ggplot(data=student,aes(x=absences, y=G1, col=sex))+geom_point()+geom_smooth(method="lm",se=F)+facet_grid(~sex)
+absences
+```
+À partir du graphique ci-dessus, nous pouvons voir comment l'absence affecte négativement les performances des garçons, mais l'absence de cours n'a pas d'impact négatif sur les performances des filles en classe.
+
+
+### Étude de la variable ***G1***
+```{r}
+var(student$G1)
+ages= ggplot(data=student,aes(x=age, fill=sex))+geom_histogram(binwidth=0.50)
+ages
+```
+Comme le montre clairement le graphique ci-dessus, la plupart des étudiants de plus de 18 ans sont des étudiants de sexe masculin car il n'y a pas d'étudiantes de plus de 20 ans.
+
+***G1 par rapport au sexe et à l'âge***
+```{r}
+G1=ggplot(data=student,aes(x=age, y=G1, col=sex, shape=sex))+geom_point()+geom_smooth(method="lm",se=F)+facet_grid(~sex)
+G1
+```
+Nous pouvons voir que les performances des filles s'améliorent avec l'âge, cependant, une diminution des performances des garçons et nettement visible dans le graphique ci-dessus.
+
+-------------- g2
+
+
+## 3.2 Calcul de la matrice de corrélation pour les variables quantitatives.
+### Carte thermique pour la matrice de corrélation
+```{r}
+numeric_features <- Filter(is.numeric, student)
+
+library(pheatmap)
+pheatmap(cor(numeric_features))
+```
+
+Comme la carte, la corrélation varie entre 1 et -1. La couleur rouge correspond à la corrélation élevée entre nos caractéristiques.
+
+Par exemple : 
+Corrélation positive : ***G1*** et ***G3***
+Corrélation négative : les ***failures*** et le ***studytime*** présentent une corrélation négative
+
+
+### Matrice de nuage de points G1 et G3
+
+```{r}
+#plot(with(student,G2), with(student,G3), xlab='G1', ylab='G3')
+ggplot(student, aes(x=G2,y=G3)) + geom_point() + geom_smooth(method="lm", se=FALSE)
+```
+On peut remarquer le G3 présente une forte corrélation positive avec le G2.
+
+### Régression multiple entre la variable G3 par rapport à age 
+```{r}
+ggplot(student,aes(x=G3))+geom_histogram(fill="darkblue",color="darkblue",na.rm=TRUE)+
+    labs(title="Classement des notes G3 par rapport à l'âge",y="",x="")+facet_wrap(~age)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 4 Étude des relations entre les variables catégorielles et quantitatives.
+### 4.1 Représenter les associations entre les variables quantitatives et les variables catégorielles (Boxplots, Bar charts for means, Stacked bar charts, Multiple histograms, etc.)
+
+```{r}
+contengency <- table(student$G3,student$sex)
+print(contengency)
+```
+
+Consultation de la dépendance avec un stack bar chart.
+```{r}
+ggplot(student,aes(x=G3,fill=sex))+geom_bar(position="stack")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x="Note (G3)",y="Sex",title="Notes des élèves par sexe")
+```
+
+
+On fait ensuite une comparaison avec des % pour mieu representer le graph.
+
+```{r}
+ggplot(student,aes(x=G3,fill=sex))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x="Note (G3)",y="Sexe",title="Notes des élèves par sexe en %")
+```
+
+
+### 4.2 Effectuer des tests t pour comparer par paire la moyenne de certaines variables quantitatives en fonction des deux niveaux de certaines variables catégorielles binaires.
+
+
+Créer un ensemble de données constitué uniquement de données mathématiques, avec des variables sexe et note finale.
+
+```{r}
+data = subset(student, select = c(sex, G3))
+glimpse(data)
+```
+Nous avons donc une variable catégorielle qui est le ***sex***. Et nous avons une variable quantitative qui est ***G3$** (note final)
+
+
+
+Histograms/barplot des différentes variables qui seront pertinentes pour les tests statistiques. 
+```{r}
+sexGraph <- table(mathData$sex)
+
+par(mfrow=c(2,2))
+hist(mathData$G3, breaks = 30, col = "darkblue", main = "Histogram de la variable student")
+barplot(sexGraph, col="darkblue", main = "Barplot de la variable sex")
+```
+
+
+Graphiques de densité pour l'âge, les absences et le note finale
+```{r}
+G3Dens <- density(mathData$G3)
+plot(G3Dens)
+```
+
+Nous pouvons voir quelques tendances claires dans les données.Il y a seulement un peu plus de femmes que d'hommes, et la note finale en mathématiques est à peu près également répartie.le plus grand nombre de personnes qui ont échoué aux tests, c'est-à-dire qui ont reçu la note 0, fera pencher toute analyse des moyennes des notes finales nettement vers la gauche. Cela est assez évident si l'on regarde le graphique de densité ci-dessus. 
+
+
+### 4.2 Effectuer des tests pour comparer par paire la moyenne de certaines variables quantitatives en fonction des deux niveaux de certaines variables catégorielles binaires.
+
+
+***Le test de Bartlett***
+```{r}
+bartlett.test(G3[mathData$G3 > 0] ~ sex[mathData$G3 > 0], data=mathData)
+```
+
+
+***Le test de Levene***
+```{r}
+leveneTest(y = mathData$G3, group = mathData$sex)
+```
+
+
+***Visualisation par Boxplot des notes finales pour chaque sexe.***
+```{r}
+ggplot(mathData, aes(x = sex, y = G3)) +
+        geom_boxplot(col = "black") +
+        ggtitle("Moyennes des notes finales par sexe")
+```
+
+
+En se basant sur les deux tests et la visualisation des données en question, on peut affirmer sans risque que l'hypothèse d'homogénéité de la variance est remplie dans cet exemple.
+
+*L'homogénéité des variances t.test*
+```{r}
+t.test(mathData$G3[mathData$sex=="F" & student$G3>0], mathData$G3[mathData$sex=="M" & student$G3>0])
+```
+
+Les notes finales moyennes des filles et des garçons sont présentées dans la console après avoir effectué le test t. Les filles ont obtenu une note de 11,20, et les garçons une note moyenne de 11,86. Cette différence est égale à environ 0,66.
+
+
+
+### 4.3
+```{r}
+fit <- aov(G3 ~ age, data=student) # y est la variable numérique et A indique les groupes
+summary(fit)
+```
+
