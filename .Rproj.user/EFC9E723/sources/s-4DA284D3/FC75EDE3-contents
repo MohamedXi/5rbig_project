@@ -7,6 +7,7 @@ output:
   html_notebook: default
 ---
 **Membre du Groupe :** Ismael Mohamed 295465, Romain Pion 222525, Mathieu Guilbaud 223096
+**Repo Github : ** https://github.com/MohamedXi/5rbig_project.git
 
 # Introduction
 Ces données concernent les élèves de deux écoles publiques portugaises et ont été recueillies au cours de l'année scolaire 2005-2006. Nous étudierons toutes les variables et leurs interactions, en mettant l'accent sur les facteurs qui influent sur la réussite des élèves.
