@@ -36,7 +36,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Étudier la réussite des étudiants},
+  pdftitle={Étudier la performance des étudiants},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -99,15 +99,16 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 
-\title{Étudier la réussite des étudiants}
+\title{Étudier la performance des étudiants}
 \author{}
 \date{\vspace{-2.5em}}
 
 \begin{document}
 \maketitle
 
-\textbf{Membre du Groupe :} Ismael Mohamed 295465 Romain Pion 222525
-Mathieu Guilbaud 223096
+\textbf{Membre du Groupe :} Ismael Mohamed 295465, Romain Pion 222525,
+Mathieu Guilbaud 223096 / \textbf{Repo Github : }
+\url{https://github.com/MohamedXi/5rbig_project.git}
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -4584,10 +4585,13 @@ Anlalise des clusters
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{RBIGeval_files/figure-latex/unnamed-chunk-56-1.pdf} On
-remarque dans le premier cluster que nous avons ceux qui ont reussi en
-majorité et dans le deuxiéme cluster nous avons ceux qui n'ont pas
-réussi.
+\includegraphics{RBIGeval_files/figure-latex/unnamed-chunk-56-1.pdf}
+Dans le le graphique ci-dessus, nous pouvons observer que le premier
+cluster montre ceux qui ont reussi et dans le deuxiéme cluster ceux qui
+n'ont pas réussi.
+
+On remarque que les cluster se font par rapport au note , on peux en
+déduire que les variables utilisées n'ont pas d'influence sur les notes
 
 \hypertarget{regroupement-hiuxe9rarchique}{%
 \subsection{5.2 Regroupement
@@ -4639,5 +4643,25 @@ Analise des donner dans chaque clusters
 remarque que c'est la meme disposition qu'avec le k-moyenne mais les
 cluster sont inversés : dans le premier nous avons les moins bonne notes
 et dans le 2ieme les meilleurs notes
+
+On remarque les mêmes clusters que le k-moyenne, on peux dire que les
+variable utilisé n'ont pas d'influence sur les notes
+
+\hypertarget{conlusion}{%
+\subsection{6 Conlusion}\label{conlusion}}
+
+Suite à l'étude que nous avons mené sur les données du fichier CSV/XLXS,
+nous pouvons conclure que le facteur qui influe le plus sur la notation
+des étudiants est le genre. En effet, nous avons constaté que les filles
+sont beaucoup plus motivée à l'idée de poursuivre des études supérieures
+et ont plus de support pédagogique que les garçons(support de cours
+personnel supplémentaire).
+
+Pour les garçons, ils sont plus âgés, étudient moins et ont plus
+d'absences que les filles. Cela entraîne un retard qu'ils n'arrivent pas
+à rattraper par la suite.
+
+Ce qui permet donc d'affirmer que les filles s'en mieux que les garçons
+dans leurs études de manière générale.
 
 \end{document}

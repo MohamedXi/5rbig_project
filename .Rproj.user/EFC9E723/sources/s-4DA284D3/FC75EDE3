@@ -3,7 +3,7 @@
     "path": "~/Documents/Courses/supinfo/5RBIG/5rbig_project/RBIGeval.Rmd",
     "project_path": "RBIGeval.Rmd",
     "type": "r_markdown",
-    "hash": "2654737885",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1610904738743.0,
@@ -11,16 +11,16 @@
     "relative_order": 1,
     "properties": {
         "chunk_output_type": "inline",
-        "cursorPosition": "9,65",
+        "cursorPosition": "11,14",
         "scrollLine": "0",
         "docOutlineVisible": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1611087472,
+    "lastKnownWriteTime": 1611087873,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1611087472090,
+    "last_content_update": 1611087873164,
     "read_only": false,
     "read_only_alternatives": []
 }
